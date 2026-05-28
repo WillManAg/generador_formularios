@@ -25,7 +25,7 @@ def procesar_formulario(request, plantilla_id):
         for campo in plantilla.campos.all():
 
             valor_usuario = request.POST.get(campo.nombre_variable, '')
-            datos_rellenos[campos.nombre_variable] = valor_usuario
+            datos_rellenos[campo.nombre_variable] = valor_usuario
 
         doc.render(datos_rellenos)
 
@@ -41,3 +41,15 @@ def procesar_formulario(request, plantilla_id):
         response['Content-Disposition'] = f'attachment; filename="{plantilla.archivo_word}"'
 
         return response
+
+def lista_plantillas(request):
+
+    plantillas = PlantillaDocumento.objects.all()
+
+    return render(request, 'formularios/index.html', {'plantillas': plantillas})
+
+def detalle_plantilla(request, plantilla_id):
+
+    plantilla = get_object_or_404(PlantillaDocumento, pk=plantilla_id)
+
+    return render(request, 'formularios/detalle.html', {'plantilla': plantilla})

@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import PlantillaDocumento, CampoFormulario
 
-class CampoFormularioInLine(admin.TabularInline):
+class CampoFormularioInLine(admin.StackedInline):
     model = CampoFormulario
     extra = 3 # La cantidad de pregunta/campos por defecto
 

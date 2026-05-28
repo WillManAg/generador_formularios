@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rellenar - {{ plantilla.nombre }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .paso-pregunta {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        .paso-pregunta.activo {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-light z-index-0">
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                
+                <a href="{% url 'lista_plantillas' %}" class="btn btn-sm btn-outline-secondary mb-4">⬅️ Volver al listado</a>
+
+                <div class="card shadow border-0 rounded-4">
+                    <div class="card-header bg-primary text-white p-4 rounded-top-4">
+                        <span class="badge bg-white text-primary mb-2 fw-bold" id="indicador-progreso">Pregunta 1 de X</span>
+                        <h2 class="mb-1 fw-bold">{{ plantilla.nombre }}</h2>
+                    </div>
+                    
+                    <div class="card-body p-5 bg-white rounded-bottom-4">
+                        <form id="form-dinamico" action="{% url 'procesar_formulario' plantilla.id %}" method="POST">
+                            {% csrf_token %}
+
+                            <div id="contenedor-pasos">
+                                {% for campo in plantilla.campos.all %}
+                                <div class="paso-pregunta {% if forloop.first %}activo{% endif %}" data-paso="{{ forloop.counter }}">
+                                    <label for="{{ campo.nombre_variable }}" class="form-label fs-4 fw-bold text-dark mb-3">
+                                        {{ campo.texto_pregunta }}
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control form-control-lg border-2 py-3 px-4 shadow-sm input-pregunta" 
+                                           id="{{ campo.nombre_variable }}" 
+                                           name="{{ campo.nombre_variable }}" 
+                                           placeholder="Escribe aquí tu respuesta..."
+                                           autocomplete="off"
+                                           required>
+                                    <div class="form-text text-muted mt-3">Presiona <span class="badge bg-light text-dark border">Intro ↵</span> para continuar</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="d-grid gap-2 pt-3 d-none" id="bloque-enviar">
+                                <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm py-3">
+                                    ⚙️ Generar Documento (.docx)
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const pasos = document.querySelectorAll(".paso-pregunta");
+            const inputs = document.querySelectorAll(".input-pregunta");
+            const indicador = document.getElementById("indicador-progreso");
+            const bloqueEnviar = document.getElementById("bloque-enviar");
+            const totalPasos = pasos.length;
+            let pasoActual = 1;
+
+            function actualizarProgreso() {
+                indicador.textContent = `Pregunta ${pasoActual} de ${totalPasos}`;
+            }
+            actualizarProgreso();
+
+            if(inputs[0]) inputs[0].focus();
+
+            inputs.forEach((input, indice) => {
+                input.addEventListener("keydown", function(event) {
+
+                    if (event.key === "Enter") {
+                        event.preventDefault(); 
+                        
+                        if (this.value.trim() === "") {
+                            this.classList.add("is-invalid");
+                            return;
+                        }
+                        this.classList.remove("is-invalid");
+
+                        if (pasoActual < totalPasos) {
+
+                            pasos[pasoActual - 1].classList.remove("activo");
+
+                            pasoActual++;
+
+                            pasos[pasoActual - 1].classList.add("activo");
+
+                            inputs[pasoActual - 1].focus();
+                            actualizarProgreso();
+                        } else {
+
+                            bloqueEnviar.classList.remove("d-none");
+                            document.getElementById("form-dinamico").submit();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -27,3 +27,10 @@ class CampoFormulario(models.Model):
         max_length=50,
         verbose_name="Variable en el Word (ej: correo_electrónic)"
     )
+
+    texto_pregunta = models.CharField(
+        max_length=255, 
+        verbose_name="Pregunta para mostrar en la web")
+    
+    def __str__(self):
+        return f"{self.nombre_variable} -> {self.plantilla.nombre}"
