@@ -6,7 +6,7 @@ from django.conf import settings
 from docxtpl import DocxTemplate
 from .models import PlantillaDocumento
 
-def procesar_formularios(request, plantilla_id):
+def procesar_formulario(request, plantilla_id):
     
     if request.method == "POST":
 
