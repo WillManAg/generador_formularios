@@ -2,7 +2,7 @@ from django.db import models
 
 class PlantillaDocumento(models.Model):
 
-    nombre = models.CharField(max_length=150 verbose_name="Nombre del Formulario")
+    nombre = models.CharField(max_length=150, verbose_name="Nombre del Formulario")
 
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
 
