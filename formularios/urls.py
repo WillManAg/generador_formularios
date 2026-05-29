@@ -3,7 +3,9 @@ from . import views
 
 urlpatterns = [
 
-    path('', views.lista_plantillas, name='lista_plantillas'),
+    path('', views.landing, name='landing'),
+
+    path('listado/', views.lista_plantillas, name='lista_plantillas'),
 
     path('<int:plantilla_id>/', views.detalle_plantilla, name='detalle_plantilla'),
 

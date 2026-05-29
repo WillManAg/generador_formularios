@@ -46,10 +46,14 @@ def lista_plantillas(request):
 
     plantillas = PlantillaDocumento.objects.all()
 
-    return render(request, 'formularios/index.html', {'plantillas': plantillas})
+    return render(request, 'formularios/listado.html', {'plantillas': plantillas})
 
 def detalle_plantilla(request, plantilla_id):
 
     plantilla = get_object_or_404(PlantillaDocumento, pk=plantilla_id)
 
     return render(request, 'formularios/detalle.html', {'plantilla': plantilla})
+
+def landing(request):
+
+    return render(request, 'formularios/landing.html')

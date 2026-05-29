@@ -1,75 +1,234 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rellenar - {{ plantilla.nombre }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Estilos base inspirados en la línea estética de Apple */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            margin: 0;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 85vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+        }
+
+        /* Enlace de retorno superior limpio */
+        .nav-back {
+            margin-bottom: 32px;
+        }
+
+        .nav-back a {
+            color: #0071e3;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .nav-back a:hover {
+            text-decoration: underline;
+        }
+
+        /* Tarjeta de interacción principal sin bordes artificiales */
+        .card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 48px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+            box-sizing: border-box;
+        }
+
+        /* Indicador de progreso estilo píldora de configuración de iOS */
+        .progress-badge {
+            display: inline-block;
+            background-color: #f5f5f7;
+            color: #86868b;
+            padding: 6px 14px;
+            border-radius: 980px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin: 0 0 8px 0;
+        }
+
+        .file-info {
+            font-size: 0.9rem;
+            color: #86868b;
+            margin-bottom: 48px;
+        }
+
+        .file-info code {
+            font-family: SFMono-Regular, Consolas, Menlo, monospace;
+            background-color: #f5f5f7;
+            padding: 3px 6px;
+            border-radius: 6px;
+            color: #1d1d1f;
+        }
+
+        /* Animación fluida de desplazamiento y opacidad para transiciones */
         .paso-pregunta {
             display: none;
-            animation: fadeIn 0.4s ease-in-out forwards;
+            animation: appleFade 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
+
         .paso-pregunta.activo {
             display: block;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        @keyframes appleFade {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.45rem;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            margin-bottom: 24px;
+            color: #1d1d1f;
+            line-height: 1.3;
+        }
+
+        /* Campos de texto estilizados con bordes redondeados y foco translúcido */
+        .input-pregunta {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 16px 20px;
+            font-size: 1.15rem;
+            border-radius: 14px;
+            border: 2px solid #d2d2d7;
+            background-color: #ffffff;
+            color: #1d1d1f;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .input-pregunta:focus {
+            border-color: #0071e3;
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+        }
+
+        /* Estado de error en rojo iOS si intentan saltarse el campo vacío */
+        .input-pregunta.is-invalid {
+            border-color: #ff3b30;
+            background-color: #fff2f2;
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: #86868b;
+            margin-top: 16px;
+        }
+
+        .badge-intro {
+            background: #ffffff;
+            border: 1px solid #d2d2d7;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #1d1d1f;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Botón de envío final en verde ecológico/éxito clásico de Apple */
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.05rem;
+            font-weight: 500;
+            border-radius: 980px;
+            border: none;
+            background-color: #34c759;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #2da94c;
+            transform: scale(1.01);
+        }
+
+        .d-none {
+            display: none !important;
         }
     </style>
 </head>
-<body class="bg-light z-index-0">
 
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                
-                <a href="{% url 'lista_plantillas' %}" class="btn btn-sm btn-outline-secondary mb-4">⬅️ Volver al listado</a>
+<body>
 
-                <div class="card shadow border-0 rounded-4">
-                    <div class="card-header bg-primary text-white p-4 rounded-top-4">
-                        <span class="badge bg-white text-primary mb-2 fw-bold" id="indicador-progreso">Pregunta 1 de X</span>
-                        <h2 class="mb-1 fw-bold">{{ plantilla.nombre }}</h2>
+    <div class="container">
+        <div class="nav-back">
+            <a href="{% url 'lista_plantillas' %}">← Volver al listado</a>
+        </div>
+
+        <div class="card">
+            <div class="progress-badge" id="indicador-progreso">Pregunta 1 de X</div>
+            <h2>{{ plantilla.nombre }}</h2>
+            <div class="file-info">Plantilla original: <code>{{ plantilla.archivo_word }}</code></div>
+
+            <form id="form-dinamico" action="{% url 'procesar_formulario' plantilla.id %}" method="POST">
+                {% csrf_token %}
+
+                <div id="contenedor-pasos">
+                    {% for campo in plantilla.campos.all %}
+                    <div class="paso-pregunta {% if forloop.first %}activo{% endif %}"
+                        data-paso="{{ forloop.counter }}">
+                        <label for="{{ campo.nombre_variable }}" class="form-label">
+                            {{ campo.texto_pregunta }}
+                        </label>
+                        <input type="text" class="input-pregunta" id="{{ campo.nombre_variable }}"
+                            name="{{ campo.nombre_variable }}" placeholder="Escribe la respuesta aquí..."
+                            autocomplete="off" required>
+                        <div class="form-text">Presiona la tecla <span class="badge-intro">Intro ↵</span> para avanzar
+                            al siguiente campo.</div>
                     </div>
-                    
-                    <div class="card-body p-5 bg-white rounded-bottom-4">
-                        <form id="form-dinamico" action="{% url 'procesar_formulario' plantilla.id %}" method="POST">
-                            {% csrf_token %}
-
-                            <div id="contenedor-pasos">
-                                {% for campo in plantilla.campos.all %}
-                                <div class="paso-pregunta {% if forloop.first %}activo{% endif %}" data-paso="{{ forloop.counter }}">
-                                    <label for="{{ campo.nombre_variable }}" class="form-label fs-4 fw-bold text-dark mb-3">
-                                        {{ campo.texto_pregunta }}
-                                    </label>
-                                    <input type="text" 
-                                           class="form-control form-control-lg border-2 py-3 px-4 shadow-sm input-pregunta" 
-                                           id="{{ campo.nombre_variable }}" 
-                                           name="{{ campo.nombre_variable }}" 
-                                           placeholder="Escribe aquí tu respuesta..."
-                                           autocomplete="off"
-                                           required>
-                                    <div class="form-text text-muted mt-3">Presiona <span class="badge bg-light text-dark border">Intro ↵</span> para continuar</div>
-                                </div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="d-grid gap-2 pt-3 d-none" id="bloque-enviar">
-                                <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm py-3">
-                                    ⚙️ Generar Documento (.docx)
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                    {% endfor %}
                 </div>
 
-            </div>
+                <div class="d-none text-center py-4" id="bloque-exito"
+                    style="animation: appleFade 0.45s ease forwards;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🎉</div>
+                    <h3 style="font-size: 1.6rem; font-weight: 600; margin-bottom: 12px; letter-spacing: -0.01em;">
+                        Documento Confeccionado</h3>
+                    <p style="color: #86868b; margin-bottom: 0; line-height: 1.5; font-size: 1.05rem;">
+                        La descarga ha comenzado automáticamente en tu Mac.<br>Ya puedes volver al listado o cerrar esta
+                        ventana.
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const pasos = document.querySelectorAll(".paso-pregunta");
             const inputs = document.querySelectorAll(".input-pregunta");
             const indicador = document.getElementById("indicador-progreso");
@@ -82,14 +241,14 @@
             }
             actualizarProgreso();
 
-            if(inputs[0]) inputs[0].focus();
+            // Auto-enfoque inmediato del primer elemento interactivo
+            if (inputs[0]) inputs[0].focus();
 
             inputs.forEach((input, indice) => {
-                input.addEventListener("keydown", function(event) {
-
+                input.addEventListener("keydown", function (event) {
                     if (event.key === "Enter") {
-                        event.preventDefault(); 
-                        
+                        event.preventDefault();
+
                         if (this.value.trim() === "") {
                             this.classList.add("is-invalid");
                             return;
@@ -97,18 +256,26 @@
                         this.classList.remove("is-invalid");
 
                         if (pasoActual < totalPasos) {
-
                             pasos[pasoActual - 1].classList.remove("activo");
-
                             pasoActual++;
-
+                            pasos[pasoActual - 1].add;
                             pasos[pasoActual - 1].classList.add("activo");
-
                             inputs[pasoActual - 1].focus();
                             actualizarProgreso();
                         } else {
 
-                            bloqueEnviar.classList.remove("d-none");
+                            pasos[pasoActual - 1].classList.remove("activo");
+
+
+                            indicador.textContent = "Completado";
+                            indicador.style.backgroundColor = "#e8f5e9";
+                            indicador.style.color = "#2da94c";
+
+
+                            const bloqueExito = document.getElementById("bloque-exito");
+                            bloqueExito.classList.remove("d-none");
+
+
                             document.getElementById("form-dinamico").submit();
                         }
                     }
@@ -117,4 +284,5 @@
         });
     </script>
 </body>
+
 </html>
